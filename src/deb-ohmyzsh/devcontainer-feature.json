@@ -1,0 +1,15 @@
+{
+  "name": "deb-ohmyzsh",
+  "id": "deb-ohmyzsh",
+  "version": "0.0.22",
+  "description": "Installs ohmyzsh on systems that use apt as package manager",
+  "documentationURL": "https://github.com/Xm798/devcontainers-features/tree/main/src/deb-ohmyzsh",
+  "installsAfter": [],
+  "options": {
+    "plugins": {
+      "type": "string",
+      "default": "git alias-tips autoupdate zsh-autosuggestions zsh-syntax-highlighting",
+      "description": "OhMyZsh plugins to enable"
+    }
+  }
+}
