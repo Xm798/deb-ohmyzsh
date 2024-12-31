@@ -13,13 +13,13 @@ if which zsh; then
   echo "ZSH is already installed. Great!"
 else
   echo "ZSH needs to be installed"
-  check_and_install zsh
+  apt install zsh
 fi
 
 # Set zsh as default shell
 chsh -s "$(which zsh)" "$_CONTAINER_USER"
 
-check_and_install wget git
+apt install wget git
 
 if [ -z "$_CONTAINER_USER_HOME" ]; then
   if [ -z "$_CONTAINER_USER" ]; then
