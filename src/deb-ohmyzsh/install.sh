@@ -4,6 +4,7 @@ set -e
 
 echo "Activating feature 'deb-ohmyzsh'"
 
+apt update
 apt install -y git zsh
 
 if [ -z "$_CONTAINER_USER_HOME" ]; then
