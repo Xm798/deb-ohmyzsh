@@ -6,7 +6,7 @@ source functions.sh
 
 echo "Activating feature 'deb-ohmyzsh'"
 
-check_and_install ca-certificates
+apt install -y ca-certificates wget git
 
 # check if zsh is installed
 if which zsh; then
@@ -18,8 +18,6 @@ fi
 
 # Set zsh as default shell
 chsh -s "$(which zsh)" "$_CONTAINER_USER"
-
-apt install wget git
 
 if [ -z "$_CONTAINER_USER_HOME" ]; then
   if [ -z "$_CONTAINER_USER" ]; then
