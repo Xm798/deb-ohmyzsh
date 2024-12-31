@@ -16,7 +16,14 @@ Installs ohmyzsh on systems that use apt as package manager
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
 | plugins | OhMyZsh plugins to enable | string | git alias-tips autoupdate zsh-autosuggestions zsh-syntax-highlighting |
+| theme | The theme to be activated | string | robbyrussell |
+| setLocale | Install required locales package and set locale | boolean | true |
+| desiredLocale | The locale that should be set when 'setLocale' is true | string | en_US.UTF-8 UTF-8 |
 
+## Acknowledgments
+
+- [nils-geistmann/devcontainers-features](https://github.com/nils-geistmann/devcontainers-features/tree/main)
+- [cirolosapio/devcontainers-features](https://github.com/cirolosapio/devcontainers-features)
 
 
 ---
