@@ -29,6 +29,11 @@ fi
 
 ZSH_RC_FILE=$_CONTAINER_USER_HOME/.zshrc
 
+# Create .zshrc file if it doesn't exist
+if [ ! -f "$ZSH_RC_FILE" ]; then
+  su -c "touch $_CONTAINER_USER_HOME/.zshrc" $_CONTAINER_USER
+fi
+
 # Install ohmyzsh
 su -c "wget -qO- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh -s" $_CONTAINER_USER
 
