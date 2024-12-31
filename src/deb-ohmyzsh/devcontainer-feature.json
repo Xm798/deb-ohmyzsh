@@ -10,6 +10,30 @@
       "type": "string",
       "default": "git alias-tips autoupdate zsh-autosuggestions zsh-syntax-highlighting",
       "description": "OhMyZsh plugins to enable"
+    },
+    "theme": {
+      "type": "string",
+      "default": "robbyrussell",
+      "description": "The theme to be activated",
+      "proposals": [
+        "robbyrussell",
+        "agnoster"
+      ]
+    },
+    "setLocale": {
+      "description": "Install required locales package and set locale",
+      "type": "boolean",
+      "default": true
+    },
+    "desiredLocale": {
+      "description": "The locale that should be set when 'setLocale' is true",
+      "type": "string",
+      "default": "en_US.UTF-8 UTF-8",
+      "proposals": [
+        "en_US.UTF-8 UTF-8",
+        "de_DE.UTF-8 UTF-8",
+        "es_ES.UTF-8 UTF-8"
+      ]
     }
   }
 }

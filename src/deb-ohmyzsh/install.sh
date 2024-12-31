@@ -2,10 +2,24 @@
 
 set -e
 
+source functions.sh
+
 echo "Activating feature 'deb-ohmyzsh'"
 
-apt update
-apt install -y git zsh
+check_and_install ca-certificates
+
+# check if zsh is installed
+if which zsh; then
+  echo "ZSH is already installed. Great!"
+else
+  echo "ZSH needs to be installed"
+  check_and_install zsh
+fi
+
+# Set zsh as default shell
+chsh -s "$(which zsh)" "$_CONTAINER_USER"
+
+check_and_install wget git
 
 if [ -z "$_CONTAINER_USER_HOME" ]; then
   if [ -z "$_CONTAINER_USER" ]; then
@@ -15,10 +29,15 @@ if [ -z "$_CONTAINER_USER_HOME" ]; then
   fi
 fi
 
+ZSH_RC_FILE=$_CONTAINER_USER_HOME/.zshrc
+
+# Install ohmyzsh
 su -c "wget -qO- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh -s" $_CONTAINER_USER
 
-sed -i 's/plugins=(git)/plugins=(\n)/' $_CONTAINER_USER_HOME/.zshrc
+# Remove default plugins from ohmyzsh
+upsert_config_option "^plugins=(.*)$" "plugins=(\n)" $ZSH_RC_FILE
 
+# Install plugins
 if echo "$PLUGINS" | grep -w -q "zsh-autosuggestions"; then
   git clone https://github.com/zsh-users/zsh-autosuggestions $_CONTAINER_USER_HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 fi
@@ -33,26 +52,33 @@ fi
 
 if echo "$PLUGINS" | grep -w -q "autojump"; then
   git clone https://github.com/wting/autojump $_CONTAINER_USER_HOME/.oh-my-zsh/custom/plugins/autojump
-  apt install -y python3
+  check_and_install python3
   su -c "cd $_CONTAINER_USER_HOME/.oh-my-zsh/custom/plugins/autojump/ && SHELL=zsh && ./install.py" $_CONTAINER_USER
-  echo $'\n[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh' >> $_CONTAINER_USER_HOME/.zshrc
-  echo $'\nautoload -U compinit && compinit -u' >> $_CONTAINER_USER_HOME/.zshrc
+  echo $'\n[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh' >> $ZSH_RC_FILE
+  echo $'\nautoload -U compinit && compinit -u' >> $ZSH_RC_FILE
 fi
 
 if echo "$PLUGINS" | grep -w -q "alias-tips"; then
-  apt install -y python3
+  check_and_install python3
   git clone https://github.com/djui/alias-tips $_CONTAINER_USER_HOME/.oh-my-zsh/custom/plugins/alias-tips
 fi
 
 if echo "$PLUGINS" | grep -w -q "zsh-interactive-cd"; then
-  apt install -y fzf
+  check_and_install fzf
 fi
 
 for plugin in $PLUGINS; do
-  sed -i "s/^plugins=(/plugins=(\n  $plugin/g" $_CONTAINER_USER_HOME/.zshrc
+  upsert_config_option "^plugins=(.*)$" "plugins=(\n  $plugin\n)" $ZSH_RC_FILE
 done
 
-sed -i "s|:/bin/ash|:/bin/zsh|g" /etc/passwd
-sed -i "s|:/bin/sh|:/bin/zsh|g" /etc/passwd
+# Set zsh theme
+upsert_config_option "^ZSH_THEME=.*$" "ZSH_THEME=\"$THEME\"" "$ZSH_RC_FILE"
+
+# Set locales
+if [ "$SETLOCALE" = "true" ]; then
+  check_and_install locales
+  echo "$DESIREDLOCALE" >>/etc/locale.gen
+  locale-gen
+fi
 
 echo 'Done!'
